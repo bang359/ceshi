@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -968,7 +969,7 @@ document.addEventListener('DOMContentLoaded',()=>{
           d.style.color = '#ff6b6b';
           d.style.cursor = 'pointer';
           d.onclick = () => {
-            showPasswordModal(item, index, data);
+            showPasswordModal(item, genreIndex, data);
           };
           currentGenreProtected = true;
           protectedChannels[genreIndex] = {
@@ -1138,6 +1139,11 @@ document.addEventListener('DOMContentLoaded',()=>{
     input.focus();
     
     function checkPassword(password, gIndex, g, data, m) {
+      if (!g || !g.password) {
+        errorMsg.textContent = '配置错误：密码未设置';
+        errorMsg.style.display = 'block';
+        return;
+      }
       if (password === g.password) {
         protectedChannels[gIndex].unlocked = true;
         document.body.removeChild(m);
@@ -1161,19 +1167,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     
     protectedData.channels.forEach((channel) => {
       const result = createChannelElement(channel);
-      const genreIndexInAll = allData.findIndex((item, idx) => 
-        item.type === 'genre' && item.name === genreElement.textContent.replace('✅', '').trim()
-      );
-      if (genreIndexInAll >= 0) {
-        let insertIndex = genreIndexInAll + 1;
-        while (insertIndex < allData.length && allData[insertIndex].type !== 'genre') {
-          if (!protectedChannels[genreIndex] || !protectedChannels[genreIndex].channels.find(c => c.name === allData[insertIndex].name)) {
-            insertIndex++;
-          } else {
-            break;
-          }
-        }
-      }
       const nextGenre = document.querySelectorAll('.genre')[genreIndex + 1];
       if (nextGenre) {
         nextGenre.parentNode.insertBefore(result.element, nextGenre);
